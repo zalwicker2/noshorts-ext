@@ -1,0 +1,21 @@
+{
+    "manifest_version": 3,
+    "name": "YouTube Shorts Remover",
+    "version": "1.0",
+    "description": "Removes shorts and upcoming videos from YouTube subscriptions, so you only see videos you can watch.",
+    "icons": {
+		"32": "images/noshorts32.png",
+		"48": "images/noshorts48.png",
+		"128": "images/noshorts128.png"
+	},
+    "content_scripts": [
+      {
+        "js": [
+          "scripts/content.js"
+        ],
+        "matches": [
+          "https://www.youtube.com/feed/subscriptions"
+        ]
+      }
+    ]
+  }
