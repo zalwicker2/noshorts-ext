@@ -11,14 +11,27 @@
   "content_scripts": [
     {
       "js": [
-        "scripts/content.js"
+        "scripts/yts-remover.js"
       ],
       "matches": [
         "https://www.youtube.com/*"
-      ],
-      "action": {
-        "default_popup": "views/settings.html"
-      }
+      ]
     }
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": [
+        "images/*"
+      ],
+      "matches": [
+        "*://*/*"
+      ]
+    }
+  ],
+  "action": {
+    "default_popup": "views/settings.html"
+  },
+  "permissions": [
+    "storage"
   ]
 }
