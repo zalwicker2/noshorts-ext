@@ -31,6 +31,7 @@ function DeleteShit(identifier, parentSelector = '', single = false) {
     } else {
         shittyVideos.forEach(item => {
             const parentToRemove = item.closest(parentSelector);
+            console.log(parentToRemove);
             if (parentToRemove != null) {
                 parentToRemove.remove();
             }
@@ -51,7 +52,8 @@ const shittyInitialIndex = {
 
 const shittyDynamicIndex = {
     "shorts": [
-        { identifier: 'ytd-thumbnail-overlay-time-status-renderer[overlay-style="SHORTS"]', parentSelector: 'ytd-guide-entry-renderer,ytd-grid-video-renderer' }
+        { identifier: 'a[href*="shorts"]', parentSelector: 'ytd-guide-entry-renderer,ytd-grid-video-renderer,ytd-rich-item-renderer' },
+        { identifier: 'ytd-rich-section-renderer' }
     ],
     "upcoming": [
         { identifier: 'ytd-thumbnail-overlay-time-status-renderer[overlay-style="UPCOMING"]', parentSelector: 'ytd-grid-video-renderer,ytd-shelf-renderer' }
@@ -95,9 +97,11 @@ function ClearShit(mutations, filters, once = false) {
             continue;
         }
         if (mutation.addedNodes.length > 0) {
+            console.log(filters)
             for (let i = 0; i < filters.length; i++) {
                 let filter = filters[i];
                 if (document.querySelector(filter.identifier)) {
+                    console.log('found', filters[i])
                     DeleteShit(filter.identifier, filter.parentSelector)
                     if (once) {
                         filters.splice(i, 1);
@@ -126,18 +130,20 @@ let dynamic_filters = [];
 
 const dynamic_observer = new MutationObserver((mutations, observer) => {
     ClearShit(mutations, dynamic_filters, null, false)
-
-    if (window.location.pathname == '/') {
-        EvenRows();
-    }
+    EvenRows();
 });
 
 const start = new MutationObserver((mutations, obs) => {
     baseNode = document.querySelector('ytd-app #content')
     if (baseNode != null) {
         obs.disconnect();
+        chrome.storage.local.get('yts-r_filter').then(values => console.log(values));
         chrome.storage.local.get("yts-r_filter").then(values => {
-            let filter = JSON.parse(values["yts-r_filter"]);
+            let savedFilters = values["yts-r_filter"];
+            let filter = ['shorts'];
+            if (savedFilters != null) {
+                filter = JSON.parse(savedFilters);
+            }
 
             initial_filters = filterToIndex(filter, shittyInitialIndex)
             initial_observer.observe(document, { childList: true, subtree: true })
